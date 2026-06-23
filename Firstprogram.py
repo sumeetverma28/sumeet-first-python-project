@@ -9,23 +9,23 @@ password = "Sumeet@123"
 # Store product list using Python list
 x = ["apple", "banana", "cherry"]
 
-# Build login validation (valid vs invalid credentials)
+# Build login validation (valid vs inLogin Successful)
 input_username = input("Enter your username: ")
 input_password = input("Enter your password: ")
 
 def validate_login(input_username, input_password):
      if input_username == username and input_password == password:
-         print("valid credentials")
+         print("Login Successful")
          return True
       
      else:
-         print("invalid credentials")
+         print("inLogin Successful")
          return False
 store=validate_login(input_username, input_password) 
-print(store)
+print("Validate Login:", store)
 
 # Practice if-else statement to compare two numbers
-a = 20
+a = 30
 b = 20
 if b > a:
    print("b is greater than a")
@@ -43,3 +43,53 @@ for fruit in fruits:
      print(fruit)
   elif fruit == "cherry":
      print(fruit)
+
+# Loop through product list and print each item
+
+fruits = ["apple", "banana", "cherry"]
+for x in fruits:
+  if x == "banana":
+    break
+  print(x)
+
+#Create login function with parameters; return success/failure
+
+def login(username: str, password: str) -> bool:
+    # Example stored credentials (in practice, use a secure database or hash)
+    stored_username = "admin"
+    stored_password = "12345"
+    
+    if username == stored_username and password == stored_password:
+        return True  # Login success
+    else:
+        return False  # Login failure
+
+store=login(input_username, input_password)
+print("Store=",store)
+    
+   #  Validate login, Store cart items , Simulate checkout#
+
+username = "Sumeet Verma"
+password = "Sumeet@123"
+if username == "Sumeet Verma" and password ==  "Sumeet@123" :
+     cart = []
+     item_1 = input("Enter item to add to cart: ")
+     cart.append(item_1)
+
+     item_2 = input("Enter item to add to cart: ")
+     cart.append(item_2)
+
+     item_3 = input("Enter item to add to cart: ")
+     cart.append(item_3)
+
+     print("Items in cart:", cart)
+
+else:
+     print("Invalid username or password. Cannot add items to cart.")
+
+
+     
+
+
+
+    

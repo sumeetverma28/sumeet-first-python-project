@@ -1,6 +1,11 @@
+import json
+from pathlib import Path
 from playwright.sync_api import sync_playwright
 
-# Page Object Model classes for Saucedemo
+
+with open(Path(__file__).with_name('test_data.json'), encoding='utf-8') as f:
+    TEST_DATA = json.load(f)
+
 
 class LoginPage:
     def __init__(self, page):
@@ -11,11 +16,19 @@ class LoginPage:
 
     def goto(self):
         self.page.goto('https://www.saucedemo.com/')
+        return self
 
     def login(self, username: str, password: str):
         self.username_input.fill(username)
         self.password_input.fill(password)
         self.login_button.click()
+        return InventoryPage(self.page)
+
+    def login_and_verify(self, username: str, password: str):
+        self.goto()
+        inventory_page = self.login(username, password)
+        assert inventory_page.is_loaded(), 'Inventory page did not load after login.'
+        return inventory_page
 
 
 class InventoryPage:
@@ -30,9 +43,28 @@ class InventoryPage:
 
     def add_product_to_cart(self, product_name: str):
         self.page.locator(f'text="{product_name}"').locator('xpath=../..').locator('button').click()
+        return self
 
     def open_cart(self):
         self.cart_button.click()
+        return CartPage(self.page)
+
+    def add_product_and_open_cart(self, product_name: str):
+        self.add_product_to_cart(product_name)
+        return self.open_cart()
+
+
+class CartPage:
+    def __init__(self, page):
+        self.page = page
+        self.cart_title = page.locator('.title')
+        self.cart_items = page.locator('.cart_item')
+
+    def is_loaded(self) -> bool:
+        return self.cart_title.inner_text().strip() == 'Your Cart'
+
+    def product_count(self) -> int:
+        return self.cart_items.count()
 
 
 def test_login_and_inventory_flow():
@@ -41,19 +73,19 @@ def test_login_and_inventory_flow():
         page = browser.new_page()
 
         login_page = LoginPage(page)
-        inventory_page = InventoryPage(page)
+        login_data = TEST_DATA['login']
+        product_name = TEST_DATA['product']
 
-        login_page.goto()
-        login_page.login('standard_user', 'secret_sauce')
+        inventory_page = login_page.login_and_verify(login_data['username'], login_data['password'])
+        cart_page = inventory_page.add_product_and_open_cart(product_name)
 
-        assert inventory_page.is_loaded(), 'Inventory page did not load after login.'
-
-        inventory_page.add_product_to_cart('Sauce Labs Backpack')
-        inventory_page.open_cart()
+        assert cart_page.is_loaded(), 'Cart page did not open.'
+        assert cart_page.product_count() == 1, 'Expected 1 item in the cart.'
 
         browser.close()
 
 
 if __name__ == '__main__':
     test_login_and_inventory_flow()
+
 

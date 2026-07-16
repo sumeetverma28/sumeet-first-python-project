@@ -7,11 +7,13 @@ from pages.cart_page import CartPage
 
 @pytest.fixture(scope='session')
 def browser_context():
-    with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=False)
-        context = browser.new_context()
-        yield context
-        browser.close()
+    playwright = sync_playwright().start()
+    browser = playwright.chromium.launch(headless=True)
+    context = browser.new_context()
+    yield context
+    context.close()
+    browser.close()
+    playwright.stop()
 
 
 @pytest.fixture

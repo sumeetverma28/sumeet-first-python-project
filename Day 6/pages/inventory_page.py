@@ -16,6 +16,9 @@ class InventoryPage:
             f'xpath=//div[contains(@class,"inventory_item") and .//div[text()="{product_name}"]]'
         )
         product_card.locator('button').click(timeout=10000)
+        return self
 
     def open_cart(self):
         self.cart_button.click()
+        return self.page.url
+    

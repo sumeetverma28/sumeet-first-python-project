@@ -1,8 +1,29 @@
 import json
 from pathlib import Path
 
-import pytest
-from playwright.sync_api import Page, sync_playwright
+try:
+    import pytest  # type: ignore
+except ImportError as e:
+    raise ImportError(
+        "pytest is not installed or cannot be imported. Install it with:\n"
+        "    pip install pytest"
+    ) from e
+
+# Type hints
+import sys
+if sys.version_info >= (3, 8):
+    pass
+
+# Ensure playwright is installed and provide a clear error if not.
+try:
+    from playwright.sync_api import Page, sync_playwright  # type: ignore
+except ImportError as e:
+    raise ImportError(
+        "playwright is not installed or cannot be imported. Install it with:\n"
+        "    pip install playwright\n"
+        "and then run:\n"
+        "    playwright install\n"
+    ) from e
 
 from pages.login_page import LoginPage
 from pages.inventory_page import InventoryPage
@@ -53,3 +74,6 @@ def test_add_product_with_reusable_login(logged_in_page: Page):
     cart_url = inventory_page.open_cart()
 
     assert cart_url.endswith('/cart.html')
+
+# Configure pytest-xdist for parallel execution
+

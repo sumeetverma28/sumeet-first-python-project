@@ -75,5 +75,5 @@ def test_add_product_with_reusable_login(logged_in_page: Page):
 
     assert cart_url.endswith('/cart.html')
 
-# Configure pytest-xdist for parallel execution
+
 
